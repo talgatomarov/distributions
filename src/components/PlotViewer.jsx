@@ -36,24 +36,37 @@ export default function PlotViewer({ data }) {
           fillcolor: 'rgba(79, 70, 229, 0.1)'
         };
 
+        // Responsive title - shorter on mobile
+        const isMobile = window.innerWidth < 768;
+        const titleText = isMobile 
+          ? `${data.distributionName || 'Distribution'}`  // Just distribution name on mobile
+          : `${data.distributionName || 'Distribution'} - ${functionName}`;
+        
         const layout = {
           title: {
-            text: `${data.distributionName || 'Distribution'} - ${functionName}`,
-            font: { size: 18, color: '#1f2937' }
+            text: titleText,
+            font: { size: isMobile ? 16 : 18, color: '#1f2937' },
+            x: 0.5,
+            xanchor: 'center'
           },
           xaxis: { 
-            title: { text: 'x', font: { size: 14 } },
+            title: { text: 'x', font: { size: isMobile ? 12 : 14 } },
             gridcolor: '#e5e7eb',
             zeroline: true,
             zerolinecolor: '#9ca3af'
           },
           yaxis: { 
-            title: { text: yAxisLabel, font: { size: 14 } },
+            title: { text: yAxisLabel, font: { size: isMobile ? 12 : 14 } },
             gridcolor: '#e5e7eb',
             zeroline: true,
             zerolinecolor: '#9ca3af'
           },
-          margin: { l: 70, r: 30, t: 80, b: 60 },
+          margin: { 
+            l: isMobile ? 50 : 70, 
+            r: isMobile ? 20 : 30, 
+            t: isMobile ? 60 : 80, 
+            b: isMobile ? 50 : 60 
+          },
           plot_bgcolor: '#ffffff',
           paper_bgcolor: '#ffffff',
           font: { family: 'Inter, system-ui, sans-serif' },
@@ -130,40 +143,69 @@ export default function PlotViewer({ data }) {
   }
 
   return (
-    <div className="w-full h-full flex flex-col space-y-6">
-      {/* Plot */}
-      <div className="flex-1 bg-white rounded-lg overflow-hidden">
+    <div className="w-full h-full flex flex-col">
+      {/* Plot - Takes most of the space */}
+      <div className="flex-1 bg-white rounded-lg overflow-hidden min-h-0">
         <div ref={plotRef} className="w-full h-full"></div>
       </div>
       
-      {/* Distribution Info */}
+      {/* Distribution Info - Compact on mobile */}
       {data && (
-        <div className="bg-gray-50 rounded-lg p-4">
-          <div className="flex items-center mb-3">
-            <h4 className="text-sm font-semibold text-gray-900">Distribution Info</h4>
-          </div>
-          <p className="text-xs text-gray-600 mb-3">{data.description}</p>
-          
-          {/* Statistics */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-white rounded-md p-2">
-              <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Type</span>
-              <p className="text-xs font-semibold text-gray-800 mt-1 capitalize">{data.type || 'Continuous'}</p>
+        <div className="bg-gray-50 rounded-lg p-2 lg:p-4 mt-2 lg:mt-4 flex-shrink-0">
+          <div className="lg:block">
+            <div className="flex items-center mb-1 lg:mb-3">
+              <h4 className="text-sm font-semibold text-gray-900">Distribution Info</h4>
             </div>
-            <div className="bg-white rounded-md p-2">
-              <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Support</span>
-              <p className="text-xs font-semibold text-gray-800 mt-1">
-                {data.type === 'discrete' ? 
-                  (data.distributionName.includes('Binomial') ? '{0, 1, ..., n}' :
-                   data.distributionName.includes('Poisson') ? '{0, 1, 2, ...}' :
-                   data.distributionName.includes('Geometric') ? '{1, 2, 3, ...}' :
-                   data.distributionName.includes('Negative') ? '{r, r+1, r+2, ...}' :
-                   '{0, 1, 2, ...}') :
-                  (data.distributionName.includes('Beta') ? '[0, 1]' : 
-                   data.distributionName.includes('Gamma') || data.distributionName.includes('Exponential') || data.distributionName.includes('Chi') || data.distributionName.includes('Log') ? '[0, ∞)' :
-                   data.distributionName.includes('Uniform') ? '[a, b]' : '(-∞, ∞)')
-                }
-              </p>
+            
+            {/* Mobile: Horizontal layout for compact info */}
+            <div className="lg:hidden">
+              <p className="text-xs text-gray-600 mb-2">{data.description}</p>
+              <div className="flex items-center space-x-4 text-xs">
+                <span className="text-gray-500">
+                  <strong>Type:</strong> <span className="text-gray-800 capitalize">{data.type || 'Continuous'}</span>
+                </span>
+                <span className="text-gray-500">
+                  <strong>Support:</strong> 
+                  <span className="text-gray-800 ml-1">
+                    {data.type === 'discrete' ? 
+                      (data.distributionName.includes('Binomial') ? '{0,1,...,n}' :
+                       data.distributionName.includes('Poisson') ? '{0,1,2,...}' :
+                       data.distributionName.includes('Geometric') ? '{1,2,3,...}' :
+                       data.distributionName.includes('Negative') ? '{r,r+1,...}' :
+                       '{0,1,2,...}') :
+                      (data.distributionName.includes('Beta') ? '[0,1]' : 
+                       data.distributionName.includes('Gamma') || data.distributionName.includes('Exponential') || data.distributionName.includes('Chi') || data.distributionName.includes('Log') ? '[0,∞)' :
+                       data.distributionName.includes('Uniform') ? '[a,b]' : '(-∞,∞)')
+                    }
+                  </span>
+                </span>
+              </div>
+            </div>
+            
+            {/* Desktop: Original grid layout */}
+            <div className="hidden lg:block">
+              <p className="text-xs text-gray-600 mb-3">{data.description}</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-white rounded-md p-2">
+                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Type</span>
+                  <p className="text-xs font-semibold text-gray-800 mt-1 capitalize">{data.type || 'Continuous'}</p>
+                </div>
+                <div className="bg-white rounded-md p-2">
+                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Support</span>
+                  <p className="text-xs font-semibold text-gray-800 mt-1 break-words">
+                    {data.type === 'discrete' ? 
+                      (data.distributionName.includes('Binomial') ? '{0, 1, ..., n}' :
+                       data.distributionName.includes('Poisson') ? '{0, 1, 2, ...}' :
+                       data.distributionName.includes('Geometric') ? '{1, 2, 3, ...}' :
+                       data.distributionName.includes('Negative') ? '{r, r+1, r+2, ...}' :
+                       '{0, 1, 2, ...}') :
+                      (data.distributionName.includes('Beta') ? '[0, 1]' : 
+                       data.distributionName.includes('Gamma') || data.distributionName.includes('Exponential') || data.distributionName.includes('Chi') || data.distributionName.includes('Log') ? '[0, ∞)' :
+                       data.distributionName.includes('Uniform') ? '[a, b]' : '(-∞, ∞)')
+                    }
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

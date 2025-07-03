@@ -25,10 +25,10 @@ export default function ParameterControl({
   const currentValue = value ?? parameter.default;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Parameter Label and Description */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
           {parameter.displayName}
         </label>
         {parameter.description && (
@@ -53,10 +53,10 @@ export default function ParameterControl({
       <div className="flex justify-end">
         <button
           onClick={handleReset}
-          className="text-xs px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+          className="text-xs px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
           title="Reset value and range to defaults"
         >
-          Reset to Default ({parameter.default})
+          Reset ({parameter.default})
         </button>
       </div>
     </div>

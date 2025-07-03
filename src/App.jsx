@@ -44,17 +44,18 @@ function App() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">
+        <div className="max-w-7xl mx-auto px-4 py-4 md:py-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
             Distribution Visualizer
           </h1>
-          <p className="text-gray-600 mt-1">Explore probability distributions and their parameters</p>
+          <p className="text-gray-600 mt-1 text-sm md:text-base">Explore probability distributions and their parameters</p>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-8 py-12">
-        <div className="flex gap-4 h-[900px] bg-white rounded-2xl overflow-hidden shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-12">
+        {/* Desktop Layout: Side by side */}
+        <div className="hidden lg:flex gap-4 h-[900px] bg-white rounded-2xl overflow-hidden shadow-sm">
           {/* Left Third - Control Panel */}
           <div className="w-1/3 bg-gray-100 p-6 space-y-4 overflow-y-auto">
             <div className="space-y-6">
@@ -88,6 +89,48 @@ function App() {
           {/* Right Two-Thirds - Plot Area */}
           <div className="w-2/3 bg-white p-12 flex items-center justify-center">
             <div className="w-full h-full">
+              <ErrorBoundary>
+                <PlotViewer data={plotData} />
+              </ErrorBoundary>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile/Tablet Layout: Stacked */}
+        <div className="lg:hidden space-y-4">
+          {/* Controls at top on mobile */}
+          <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                <h2 className="text-lg font-medium text-gray-900">Controls</h2>
+              </div>
+              
+              {/* Distribution Selection */}
+              <div className="space-y-4">
+                <DistributionSelector
+                  distributions={distributions}
+                  selected={selectedDistribution}
+                  onSelect={handleDistributionChange}
+                />
+              </div>
+
+              {/* Parameter Controls */}
+              {selectedDistribution && (
+                <div className="space-y-4">
+                  <ParameterInputs
+                    distribution={selectedDistribution}
+                    values={parameters}
+                    onChange={setParameters}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Plot below controls on mobile */}
+          <div className="bg-white rounded-xl shadow-sm p-2 md:p-4">
+            <div className="h-[500px] md:h-[600px]">
               <ErrorBoundary>
                 <PlotViewer data={plotData} />
               </ErrorBoundary>
