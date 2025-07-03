@@ -85,6 +85,11 @@ const RangeSlider = forwardRef(({
     }
   };
 
+  // Helper function to select all text on focus
+  const handleInputFocus = (e) => {
+    e.target.select();
+  };
+
   // Handle case where min > max by swapping them for slider logic
   const effectiveMin = Math.min(sliderMin, sliderMax);
   const effectiveMax = Math.max(sliderMin, sliderMax);
@@ -119,6 +124,7 @@ const RangeSlider = forwardRef(({
             type="number"
             value={sliderMin}
             onChange={handleMinChange}
+            onFocus={handleInputFocus}
             step={step}
             className="w-full text-xs px-2 py-1 bg-gray-50 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
             disabled={disabled}
@@ -130,6 +136,7 @@ const RangeSlider = forwardRef(({
             type="number"
             value={sliderMax}
             onChange={handleMaxChange}
+            onFocus={handleInputFocus}
             step={step}
             className="w-full text-xs px-2 py-1 bg-gray-50 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
             disabled={disabled}
@@ -173,6 +180,7 @@ const RangeSlider = forwardRef(({
           type="number"
           value={exactValue}
           onChange={handleExactValueChange}
+          onFocus={handleInputFocus}
           onBlur={handleExactValueBlur}
           step={step}
           className="w-full text-sm px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
